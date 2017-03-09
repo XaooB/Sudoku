@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto';
+    background: rgba(0, 0, 0, .89);
+}
+
+.container {
+    width: 1200px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding-bottom:110px;
+    h1 {
+        text-align: center;
+        font-size: 40px;
+        padding: 40px 0 20px 0;
+        color: #000000;
+        position: relative;
+    }
+    table {
+        width: 550px;
+        height: 550px;
+        margin: 0 auto;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        tr {
+            border: 20px solid red;
+            td {
+                width: 40px;
+                height: 47px;
+                border-radius: 6px;
+                border-bottom: 3px solid #d8bb36;
+                background: #f7e388;
+                input {
+                    width: 100%;
+                    height: 100%;
+                    background: transparent;
+                    border: none;
+                    text-align: center;
+                    color: #847221;
+                    font-size: 16px;
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+    .sudoku-wrapper {
+        margin: 0 auto;
+        overflow: hidden;
+        width: 550px;
+        height: auto;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: space-around;
+        button {
+            font-weight: lighter;
+            width: 90px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid #d8bb36;
+            box-shadow: inset 0 0 0 0 #f7e388;
+            cursor: pointer;
+            transition: all ease 0.5s;
+            &:hover {
+                box-shadow: inset 0 -40px 0 0 #f7e388;
+                color: #000000;
+            }
+        }
+    }
+}
