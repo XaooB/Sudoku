@@ -29,7 +29,7 @@ var grid = [
 
 
 var solveSudoku = function (grid, row, col) {
-    if (row > 8 && col > 8) return;
+    if (row > 7 && col > 8) return;
     if (col > 8) {
         row++;
         col = 0;
