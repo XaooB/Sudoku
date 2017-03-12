@@ -1,13 +1,13 @@
 var grid = [
-    [0, 3, 1, 2, 0, 5,8, 0, 0],
-    [0, 5, 0, 0, 0, 0, 0, 0, 0],
-    [6, 0, 0, 4, 0, 3, 0, 0, 0],
-    [3, 0, 0, 0, 0, 0, 9, 0, 0],
-    [8, 0, 7, 5, 0, 1, 3, 0, 6],
-    [0, 0, 2, 0, 0, 0, 0, 0, 7],
-    [0, 0, 0, 0, 0, 7, 0, 0, 5],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 5, 1, 0, 0, 2, 4, 9, 0]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0]
 ],
     invalidGrid = [
       [[], [], [], [], [], [], [], [], []],
@@ -25,7 +25,8 @@ var grid = [
     col = 0,
     value = 0,
     index = 0,
-    z = 0;
+    backward = false,
+    z = 1;
 
 
 var solveSudoku = function (grid, row, col) {
@@ -39,23 +40,20 @@ var solveSudoku = function (grid, row, col) {
         value = supplyGrid[index];
         if (isValid(row, col, value)) {
             grid[row][col] = value;
-            var costam = invalidGrid[row][col];
-            costam.push(value)
+            if (backward) {
+                z = 1;
+                backward = false;
+            };
+            var iArr = invalidGrid[row][col];
+            iArr.push(value)
             col++;
             supplyGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9];
             solveSudoku(grid, row, col);
         } else {
             supplyGrid.splice(index, 1);
             //console.log(supplyGrid);
-            if (supplyGrid.length < 1) { //teoretyczny backtracking
-                col--;
-                if (col < 0) col = 8;
-                supplyGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-                for (var i = 0; i < invalidGrid[row][col].length; i++) {
-                    supplyGrid.splice(supplyGrid.indexOf(invalidGrid[row][col][i]), 1)
-                }
-                grid[row][col] = 0;
-                solveSudoku(grid, row, col);
+            if (supplyGrid.length < 1) {
+                changePreviousValue(grid, row, col);
             }
             solveSudoku(grid, row, col);
         }
@@ -66,31 +64,31 @@ var solveSudoku = function (grid, row, col) {
     return this;
 }
 
+function changePreviousValue(grid, row, col) {
+    col--;
+    if (col < 0) {
+        col = 8;
+        row--;
+    }
+    backward = true;
+    console.log(`Cofnałem się z pola GRID:[${row}][${col+1}] o ${z} do tyłu na pole GRID:[${row}][${col}]`);
+    if (z > 1) {
+        if (col > 7) { //row = 4, col = 8
+            row++;
+            col = -1
+        }
+        var iArr = invalidGrid[row][col + 1];
+        iArr.splice(0, invalidGrid[row][col + 1].length);
+    }
+    z++;
 
-//function solveSudoku() {
-//    var value, id = 0;
-//    for (i = 0; i < 9; i++) {
-//        for (j = 0; j < 9; j++) { //[0][0] = 1 [0][1] = ?
-//            console.log(`i = ${i}, j = ${j}`);
-//            console.log(`GRID: ${grid[i][j]}`);
-//            if (grid[i][j] === undefined) {
-//                if (id > 8) id = 0;
-//                value = supplyGrid[id];
-//                id++;
-//                if ((validateRow(i, j, value)) && (validateColumn(i, j, value)) === true) {
-//                    grid[i][j] = value;
-//                } else {
-//                    value = supplyGrid[id++];
-//                    grid[i][j] = value;
-//                    //                    console.log(`TO JEST GRID WEWNĄTRZ ELSA ${grid[i][j]}`);
-//                }
-//            }
-//            console.log('--------------------');
-//        }
-//        id = 0;
-//    }
-//    console.log(grid);
-//}
+    supplyGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    for (var i = 0; i < invalidGrid[row][col].length; i++) {
+        supplyGrid.splice(supplyGrid.indexOf(invalidGrid[row][col][i]), 1)
+    }
+    grid[row][col] = 0;
+    solveSudoku(grid, row, col);
+}
 
 function displaySudoku() {
     var string = '';
