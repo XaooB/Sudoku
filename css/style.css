@@ -20,35 +20,37 @@ body {
   width: 1200px;
   margin: 0 auto;
   height: 100vh; }
-  .container h1 {
+  .container h1, .container span {
     text-align: center;
     font-size: 40px;
     padding: 40px 0 20px 0;
     color: rgba(255, 255, 255, 0.7);
     position: relative; }
+  .container span {
+    padding: 20px 0 10px 0;
+    font-size: 24px; }
   .container table {
     width: 550px;
     height: 550px;
     margin: 0 auto;
     margin-top: 20px;
     margin-bottom: 10px; }
-    .container table tr {
-      border: 20px solid red; }
-      .container table tr td {
-        width: 40px;
-        height: 47px;
-        border-radius: 6px;
-        border-bottom: 3px solid rgba(255, 255, 255, 0.7);
-        background: rgba(0, 0, 0, 0.2); }
-        .container table tr td input {
-          width: 100%;
-          height: 100%;
-          background: transparent;
-          border: none;
-          text-align: center;
-          color: rgba(0, 0, 0, 0.7);
-          font-size: 16px;
-          font-weight: bold; }
+    .container table tr td {
+      width: 40px;
+      height: 47px;
+      border-radius: 6px;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.7);
+      background: rgba(0, 0, 0, 0.2); }
+      .container table tr td input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        text-align: center;
+        color: rgba(0, 0, 0, 0.7);
+        font-size: 16px;
+        font-weight: bold; }
+    .container table tr .boardBg {
+      background: rgba(255, 255, 255, 0.7); }
   .container .sudoku-wrapper {
     margin: 0 auto;
     overflow: hidden;
@@ -59,7 +61,7 @@ body {
     justify-content: space-around; }
     .container .sudoku-wrapper button {
       font-weight: lighter;
-      width: 130px;
+      width: 125px;
       height: 40px;
       color: #ffffff;
       background: transparent;
@@ -71,13 +73,26 @@ body {
       .container .sudoku-wrapper button:hover {
         box-shadow: inset 0 -40px 0 0 rgba(255, 255, 255, 0.2);
         color: #ffffff; }
+    .container .sudoku-wrapper .set-level select#lev {
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      margin-left: 4px; }
+      .container .sudoku-wrapper .set-level select#lev:hover {
+        background: rgba(255, 255, 255, 0.7); }
+    .container .sudoku-wrapper .set-level button {
+      width: 120px;
+      margin-left: 20px;
+      border-bottom: none;
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: none; }
   .container .solve {
     margin: 0 auto;
     width: 550px;
     text-align: center; }
     .container .solve button {
       margin-top: 10px;
-      width: 98.5%;
+      width: 97%;
       font-weight: bold;
       height: 40px;
       background: transparent;
