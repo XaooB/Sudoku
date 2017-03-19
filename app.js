@@ -1,141 +1,228 @@
-var grid = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0]
-],
-    invalidGrid = [
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []],
-      [[], [], [], [], [], [], [], [], []]
+var sudokuGame = (function () {
+    var grid = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
-    supplyGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    row = 0,
-    col = 0,
-    value = 0,
-    index = 0,
-    backward = false,
-    z = 1;
+        grid2 = [];
 
+    var addGame = function () {
+        var htmlGrid = document.querySelectorAll('table tr td input'),
+            c = 0;
 
-var solveSudoku = function (grid, row, col) {
-    if (row > 7 && col > 8) return;
-    if (col > 8) {
-        row++;
-        col = 0;
+        for (var i = 0; i < 9; i++)
+            for (var j = 0; j < 9; j++, c++)
+                if (Number(htmlGrid[c].value) !== 0)
+                    grid[i][j] = Number(htmlGrid[c].value);
+
+                //        checkTheBoard(grid);
+        grid2 = grid.slice(); //działa
+        bindKeyPress(htmlGrid);
     }
-    if (grid[row][col] === 0) {
-        index = Math.floor(Math.random() * supplyGrid.length);
-        value = supplyGrid[index];
-        if (isValid(row, col, value)) {
-            grid[row][col] = value;
-            if (backward) {
-                z = 1;
-                backward = false;
-            };
-            var iArr = invalidGrid[row][col];
-            iArr.push(value)
-            col++;
-            supplyGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-            solveSudoku(grid, row, col);
-        } else {
-            supplyGrid.splice(index, 1);
-            //console.log(supplyGrid);
-            if (supplyGrid.length < 1) {
-                changePreviousValue(grid, row, col);
+
+    var copy = function (array) {
+        var copy = [9];
+        for (var i = 0; i < 9; i++) {
+            copy[i] = []
+            for (var j = 0; j < 9; j++) {
+                copy[i][j] = array[i][j];
             }
-            solveSudoku(grid, row, col);
         }
-    } else { //row = 3, col = 5
-        col++;
-        solveSudoku(grid, row, col);
+        return copy;
     }
-    return this;
-}
 
-function changePreviousValue(grid, row, col) {
-    col--;
-    if (col < 0) {
-        col = 8;
-        row--;
-    }
-    backward = true;
-    console.log(`Cofnałem się z pola GRID:[${row}][${col+1}] o ${z} do tyłu na pole GRID:[${row}][${col}]`);
-    if (z > 1) {
-        if (col > 7) { //row = 4, col = 8
-            row++;
-            col = -1
+    var keyPressed = function(e) {
+        console.log('key pressed')
+        grid2 = copy(grid);
+        var str = this.getAttribute('id'),
+            row = Number(str.slice(0, 1)),
+            col = Number(str.slice(1, 2)),
+            value = Number(e.key);
+
+        if (solveAfterKeyPress(grid2, row, col, value, str)) {
+            e.target.parentNode.style.backgroundColor = '';
+            grid[row][col] = value;
+            return true;
+        } else {
+            e.target.parentNode.style.backgroundColor = 'rgba(206,12,67,.8)';
+            grid[row][col] = 0;
+            return false;
         }
-        var iArr = invalidGrid[row][col + 1];
-        iArr.splice(0, invalidGrid[row][col + 1].length);
     }
-    z++;
 
-    supplyGrid = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    for (var i = 0; i < invalidGrid[row][col].length; i++) {
-        supplyGrid.splice(supplyGrid.indexOf(invalidGrid[row][col][i]), 1)
-    }
-    grid[row][col] = 0;
-    solveSudoku(grid, row, col);
-}
+    var solveAfterKeyPress = function (grid2, row, col, value, str) {
+        var field = findUnassignedLocation(grid2, row, col),
+            row1 = Number(str.slice(0, 1)),
+            col1 = Number(str.slice(1, 2));
+        row = field[0]; //2
+        col = field[1]; //3
 
-function displaySudoku() {
-    var string = '';
-    for (var i = 0; i < 9; i++) {
-        string += '<tr>';
-        for (var j = 0; j < 9; j++) {
-            string += '<td>';
-            string += `${grid[i][j]}`;
-            string += '</td>';
+        if (row === -1) {
+            //fillTheDom(grid);
+            return true;
         }
-        string += '</tr>';
-    }
-    document.write('<table>' + string + '</table>')
-}
 
-function isValid(row, col, value) {
-    if ((validateColumn(row, col, value)) || (validateRow(row, col, value)) || (validateBox(row, col, value))) {
+        if ((col == col1) && (row == row1)) {
+            if (isValid(grid2, row, col, value)) {
+                grid2[row][col] = value;
+                console.log(grid);
+                if (solveAfterKeyPress(grid2, row, col, value, str)) {
+                    return true;
+                }
+                grid2[row][col] = 0;
+            }
+        } else {
+            for (var num = 1; num <= 9; num++) {
+                if (isValid(grid2, row, col, num)) {
+                    grid2[row][col] = num;
+                    if (solveAfterKeyPress(grid2, row, col, value, str)) {
+                        return true;
+                    }
+                    grid2[row][col] = 0;
+                }
+            }
+        }
         return false;
-    } else {
+    }
+
+    var saveGame = function () {
+        localStorage.setItem('grid', JSON.stringify(grid));
+    }
+
+    var loadGame = function () {
+        var htmlGrid = document.querySelectorAll('table tr td input'),
+            c = 0;
+
+        grid = JSON.parse(localStorage.getItem('grid'));
+        for (var i = 0; i < 9; i++)
+            for (var j = 0; j < 9; j++, c++)
+                if (grid[i][j] !== 0)
+                    htmlGrid[c].value = grid[i][j];
+        bindKeyPress(htmlGrid);
+    }
+
+    var checkTheBoard = function (grid) {
+        var row = col = 0,
+            array = [];
+        while (row < 9) {
+            //TRZEBA SPRAWDZIĆ GRIDA, CZY DANA LICBA PO DODANIU GRY SIĘ NIE POWTARZA!
+        }
+    }
+
+    var fillTheDom = function (grid) {
+        var htmlGrid = document.querySelectorAll('table tr td input'),
+            c = 0;
+        for (var i = 0; i < 9; i++)
+            for (var j = 0; j < 9; j++, c++) {
+                htmlGrid[c].value = grid[i][j];
+            }
+    }
+
+    var solver = function () {
+        solveSudoku(grid, 0, 0);
+    }
+
+    var solveSudoku = function (grid, row, col) {
+        var field = findUnassignedLocation(grid, row, col);
+        row = field[0]; //2
+        col = field[1]; //3
+
+        if (row === -1) {
+            fillTheDom(grid);
+            return true;
+        }
+
+        for (var num = 1; num <= 9; num++) {
+            if (isValid(grid, row, col, num)) {
+                grid[row][col] = num;
+                if (solveSudoku(grid, row, col)) {
+                    return true;
+                }
+                grid[row][col] = 0;
+            }
+        }
+        return false;
+    }
+
+    var findUnassignedLocation = function (grid, row, col) {
+        var foundZero = false;
+        var location = [-1, -1];
+
+        while (!foundZero) {
+            if (row === 9) {
+                foundZero = true;
+            } else {
+                if (grid[row][col] === 0) {
+                    location[0] = row;
+                    location[1] = col;
+                    foundZero = true;
+                } else {
+                    if (col < 8) {
+                        col++;
+                    } else {
+                        row++;
+                        col = 0;
+                    }
+                }
+            }
+        }
+        return location;
+    }
+
+    var isValid = function (grid, row, col, num) {
+        return validateRow(grid, row, num) && validateCol(grid, col, num) && validateBox(grid, row, col, num);
+    }
+
+    var validateRow = function (grid, row, num) {
+        for (var col = 0; col < 9; col++)
+            if (grid[row][col] === num)
+                return false;
         return true;
     }
-}
 
-function validateBox(row, col, value) {
-    row = Math.floor(row / 3) * 3;
-    col = Math.floor(col / 3) * 3;
-    var isFound = false;
-    for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < 3; j++) {
-            if (grid[row + i][col + j] == value) isFound = true;
-        }
+    var validateCol = function (grid, col, num) {
+        for (var row = 0; row < 9; row++)
+            if (grid[row][col] === num)
+                return false;
+        return true;
     }
-    return isFound;
-}
 
-function validateRow(row, col, value) {
-    var isFound = false;
-    for (var i = 0; i < 9; i++) {
-        if (grid[row][i] === value) isFound = true;
+    var validateBox = function (grid, row, col, num) {
+        row = Math.floor(row / 3) * 3;
+        col = Math.floor(col / 3) * 3;
+        for (var r = 0; r < 3; r++)
+            for (var c = 0; c < 3; c++)
+                if (grid[row + r][col + c] === num)
+                    return false;
+        return true;
     }
-    return isFound;
-}
 
-function validateColumn(row, col, value) {
-    var isFound = false;
-    for (var i = 0; i < 9; i++) {
-        if (grid[i][col] === value) isFound = true;
+    var bindKeyPress = function (htmlGrid) {
+        for (var i = 0; i < 80; i++)
+            htmlGrid[i].addEventListener('keypress', keyPressed, false);
     }
-    return isFound;
-}
+
+    var _bindEvents = function () {
+        //        document.querySelector('#newGame').addEventListener('click', _newGame, false);
+        document.querySelector('#saveGame').addEventListener('click', saveGame, false);
+        document.querySelector('#loadGame').addEventListener('click', loadGame, false);
+        document.querySelector('#addGame').addEventListener('click', addGame, false);
+        document.querySelector('#solveGame').addEventListener('click', solver, false);
+    };
+
+    var init = function () {
+        _bindEvents();
+    }
+
+    return {
+        init: init
+    }
+}());
+
+sudokuGame.init();
