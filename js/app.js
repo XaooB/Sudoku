@@ -10,7 +10,7 @@ var sudokuGame = (function () {
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
-        grid2, //copy of grid
+        grid2 = [] //copy of grid
         newGameStatus = false,
         amoutToDelete = 0;
 
@@ -22,8 +22,6 @@ var sudokuGame = (function () {
             for (var j = 0; j < 9; j++, c++)
                 if (Number(htmlGrid[c].value) !== 0)
                     grid[i][j] = Number(htmlGrid[c].value);
-
-                //        checkTheBoard(grid);
         bindKeyPress(htmlGrid);
     }
 
@@ -193,6 +191,7 @@ var sudokuGame = (function () {
         row = field[0]; //2
         col = field[1]; //3
         if (row === -1) {
+            if (!newGameStatus) fillTheDom(grid);
             return true;
         }
 
@@ -202,12 +201,10 @@ var sudokuGame = (function () {
             }
             if (isValid(grid, row, col, num)) {
                 grid[row][col] = num;
-                fillTheDom(grid);
                 if (solveSudoku(grid, row, col)) {
                     return true;
                 }
                 grid[row][col] = 0;
-                fillTheDom(grid);
             }
         }
         return false;
