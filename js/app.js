@@ -10,17 +10,9 @@ var sudokuGame = (function () {
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
-        grid2 = [],
+        grid2, //copy of grid
         newGameStatus = false,
         amoutToDelete = 0;
-
-
-    //    var button = document.querySelector("#newGame");
-    //    button.onclick = function () {
-    //        alert(document.getElementById('levels').value);
-    //    };
-
-
 
     var addGame = function () {
         var htmlGrid = document.querySelectorAll('table tr td input'),
@@ -102,12 +94,6 @@ var sudokuGame = (function () {
     var randomNumber = function () {
         return Math.floor(Math.random() * 9);
     }
-
-    
-    
-    
-    
-    
     
     var exportGame = function () {   
         var exportGrid = document.querySelector('#download');
@@ -119,13 +105,7 @@ var sudokuGame = (function () {
             }
         });
     };
-
-    
-    
-    
-    
-    
-    
+       
     var keyPressed = function (e) {
         console.log('key pressed')
         grid2 = copy(grid);
@@ -160,7 +140,6 @@ var sudokuGame = (function () {
         if ((col == col1) && (row == row1)) {
             if (isValid(grid2, row, col, value)) {
                 grid2[row][col] = value;
-                console.log(grid);
                 if (solveAfterKeyPress(grid2, row, col, value, str)) {
                     return true;
                 }
@@ -196,14 +175,6 @@ var sudokuGame = (function () {
         bindKeyPress(htmlGrid);
     }
 
-    var checkTheBoard = function (grid) {
-        var row = col = 0,
-            array = [];
-        while (row < 9) {
-            //TRZEBA SPRAWDZIĆ GRIDA, CZY DANA LICBA PO DODANIU GRY SIĘ NIE POWTARZA!
-        }
-    }
-
     var fillTheDom = function (grid) {
         var htmlGrid = document.querySelectorAll('table tr td input'),
             c = 0;
@@ -222,7 +193,6 @@ var sudokuGame = (function () {
         row = field[0]; //2
         col = field[1]; //3
         if (row === -1) {
-            if (!newGameStatus) fillTheDom(grid);
             return true;
         }
 
@@ -232,10 +202,12 @@ var sudokuGame = (function () {
             }
             if (isValid(grid, row, col, num)) {
                 grid[row][col] = num;
+                fillTheDom(grid);
                 if (solveSudoku(grid, row, col)) {
                     return true;
                 }
                 grid[row][col] = 0;
+                fillTheDom(grid);
             }
         }
         return false;
