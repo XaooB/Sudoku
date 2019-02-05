@@ -77,25 +77,13 @@ var sudokuGame = (function () {
         fillTheDom(grid);
     }
 
-    var copy = function (array) {
-        var copy = [9];
-        for (var i = 0; i < 9; i++) {
-            copy[i] = []
-            for (var j = 0; j < 9; j++) {
-                copy[i][j] = array[i][j];
-            }
-        }
-        return copy;
-    }
-
-
     var randomNumber = function () {
         return Math.floor(Math.random() * 9);
     }
-    
-    var exportGame = function () {   
+
+    var exportGame = function () {
         var exportGrid = document.querySelector('#download');
-        
+
         html2canvas(document.querySelector('table'), {
             onrendered: function (canvas) {
                 exportGrid.setAttribute('href', canvas.toDataURL('image/png'));
@@ -103,10 +91,9 @@ var sudokuGame = (function () {
             }
         });
     };
-       
+
     var keyPressed = function (e) {
-        console.log('key pressed')
-        grid2 = copy(grid);
+        grid2 = grid.slice();
         var str = this.getAttribute('id'),
             row = Number(str.slice(0, 1)),
             col = Number(str.slice(1, 2)),
